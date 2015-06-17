@@ -1,0 +1,74 @@
+curl -XGET 'http://test.elasticsearch.com/swiftutil-${YYYY}.${MM}.*/_search?pretty' -d '{
+  "facets": {
+    "0": {
+      "date_histogram": {
+        "key_field": "@timestamp",
+        "value_field": "Bytes",
+        "interval": "1d"
+      },
+      "global": true,
+      "facet_filter": {
+        "fquery": {
+          "query": {
+            "filtered": {
+              "query": {
+                "query_string": {
+                  "query": "tenant:\"AUTH_test-project\""
+                }
+              },
+              "filter": {
+                "bool": {
+                  "must": [
+                    {
+                      "range": {
+                        "@timestamp": {
+                          "from": ${FROM},
+                          "to": ${TO}
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "1": {
+      "date_histogram": {
+        "key_field": "@timestamp",
+        "value_field": "Bytes",
+        "interval": "1d"
+      },
+      "global": true,
+      "facet_filter": {
+        "fquery": {
+          "query": {
+            "filtered": {
+              "query": {
+                "query_string": {
+                  "query": "tenant:\"AUTH_test-project2\""
+                }
+              },
+              "filter": {
+                "bool": {
+                  "must": [
+                    {
+                      "range": {
+                        "@timestamp": {
+                          "from": ${FROM},
+                          "to": ${TO}
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+  "size": 0
+}
